@@ -13,14 +13,13 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE.  Use this program  at  your own risk!
  */
-
-#include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
 
+#include "unistd.h"
 #include "byte_order.h"
 #include "rhash_timing.h"
 

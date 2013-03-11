@@ -10,11 +10,10 @@
 #include <string.h>
 #include <assert.h>
 #include <sys/types.h> /* ino_t */
-#include <dirent.h>    /* opendir/readdir */
 #include <errno.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
+//#include "dirent.h"    /* opendir/readdir */
 #include "output.h"
 #include "win_utils.h"
 #include "find_file.h"

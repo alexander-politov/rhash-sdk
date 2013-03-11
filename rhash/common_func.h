@@ -29,7 +29,7 @@
 /*#else
 #include <windows.h>*/
 #elif _MSC_VER > 1300
-#include "win32/platform-dependent.h"
+#include "platform-dependent.h"
 #endif
 
 

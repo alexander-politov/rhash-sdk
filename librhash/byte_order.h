@@ -9,7 +9,7 @@
 #endif
 
 #if _MSC_VER > 1000
-#include "platform-dependent.h"
+#include "lib-platform-dependent.h"
 #endif
 
 #ifdef __GLIBC__

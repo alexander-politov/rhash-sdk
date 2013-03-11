@@ -1,7 +1,6 @@
 /* output.c */
 
 #include "common_func.h" /* should be included before the C library files */
-#include <unistd.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,7 +8,7 @@
 #include <assert.h>
 #include <errno.h>
 
-#include "librhash/rhash.h"
+#include "rhash.h"
 #include "calc_sums.h"
 #include "parse_cmdline.h"
 #include "rhash_main.h"

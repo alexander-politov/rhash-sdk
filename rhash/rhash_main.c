@@ -9,15 +9,14 @@
 #include "common_func.h" /* should be included before the C library files */
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h> /* free() */
-#include <unistd.h> /* S_ISDIR under VC6 */
+#include <stdlib.h> /* free() */ 
 #include <sys/stat.h> /* stat(), S_ISDIR */
 #include <signal.h>
 #include <locale.h>
 #include <assert.h>
 
-#include "librhash/rhash.h"
-#include "librhash/rhash_timing.h"
+#include "rhash.h"
+#include "rhash_timing.h"
 #include "win_utils.h"
 #include "find_file.h"
 #include "calc_sums.h"
@@ -26,8 +25,6 @@
 #include "hash_print.h"
 #include "parse_cmdline.h"
 #include "output.h"
-#include "version.h"
-
 #include "rhash_main.h"
 
 struct rhash_t rhash_data;
@@ -54,7 +51,7 @@ static int find_file_callback(file_t* file, void* data)
 	if(data) {
 		if(!file_mask_match(opt.files_accept, file->path)) return 0;
 
-		if(opt.fmt & FMT_SFV)
+		if(  ( opt.flags & OPT_VERBOSE) ) //v0.1 added && ( opt.flags & OPT_VERBOSEE)
 			print_sfv_header_line(rhash_data.out, file, 0);
 
 		rhash_data.batch_size += file->size;
@@ -177,7 +174,8 @@ int main(int argc, char *argv[])
 {
 	find_file_options search_opt;
 	timedelta_t timer;
-	int sfv;
+	char version_str[10];
+	rhash_get_lib_version(version_str);
 
 	i18n_initialize(); /* initialize locale and translation */
 
@@ -196,7 +194,7 @@ int main(int argc, char *argv[])
 	if(opt.mode & MODE_BENCHMARK) {
 		unsigned flags = (opt.flags & OPT_BENCH_RAW ? RHASH_BENCHMARK_CPB | RHASH_BENCHMARK_RAW : RHASH_BENCHMARK_CPB);
 		if((opt.flags & OPT_BENCH_RAW) == 0) {
-			fprintf(rhash_data.out, _("%s v%s benchmarking...\n"), PROGRAM_NAME, VERSION);
+			fprintf(rhash_data.out, _("%s v%s (lib v%s) benchmarking...\n"), PROGRAM_NAME, PROGRAM_VERSION, version_str);
 		}
 		rhash_run_benchmark(opt.sum_flags, flags, rhash_data.out);
 		rsh_exit(0);
@@ -209,7 +207,7 @@ int main(int argc, char *argv[])
 
 		/* print short usage help */
 		log_msg(_("Usage: %s [OPTION...] <FILE>...\n\n"
-			"Run `%s --help' for more help.\n"), CMD_FILENAME, CMD_FILENAME);
+			"Run `%s --help' for more help.\n"), CMD_FILENAME); //corrected in v0.1
 		rsh_exit(0);
 	}
 
@@ -239,18 +237,15 @@ int main(int argc, char *argv[])
 	search_opt.options = FIND_SKIP_DIRS;
 	search_opt.call_back = find_file_callback;
 
-	if((sfv = (opt.fmt == FMT_SFV && !opt.mode))) {
-		print_sfv_banner(rhash_data.out);
-	}
+	if ( opt.flags & OPT_VERBOSE ) {// v0.1 added: print the banner if verbose mode too
+		print_sfv_banner_to_stdout();
+	}	
 
 	/* pre-process files */
-	if(sfv || opt.bt_batch_file) {
-		/* note: errors are not reported on pre-processing */
-		search_opt.call_back_data = (void*)1;
-		process_files((const char**)opt.files, opt.n_files, &search_opt);
-
-		fflush(rhash_data.out);
-	}
+	/* note: errors are not reported on pre-processing */ //corrected in v0.1
+	search_opt.call_back_data = (void*)1;
+	process_files((const char**)opt.files, opt.n_files, &search_opt);
+	fflush(rhash_data.out);
 
 	/* measure total processing time */
 	rhash_timer_start(&timer);

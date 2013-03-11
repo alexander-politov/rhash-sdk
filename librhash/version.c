@@ -1,6 +1,8 @@
-/* util.c - memory, vector and strings utility functions
+/* version.c - API functions to get the RHash library versions
  *
- * Copyright: 2010-2012 Aleksey Kravchenko <rhash.admin@gmail.com>
+ * Copyright: 2010-2013
+ * Alexander Politov <alexander.politov@gmail.com>, 
+ * Aleksey Kravchenko <rhash.admin@gmail.com>
  *
  * Permission is hereby granted,  free of charge,  to any person  obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -14,11 +16,11 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  Use this program  at  your own risk!
  */
 
-#include "unistd.h"
-#include <stdlib.h> /* size_t for vc6.0 */
-#include <stdarg.h>
-#include <stdio.h>
+#include "version.h"
 #include <string.h>
-#include <wchar.h>
-#include "util.h"
 
+int rhash_get_lib_version(char *version_str)
+{	
+	strcpy(version_str, VERSION);
+	return 0;
+}

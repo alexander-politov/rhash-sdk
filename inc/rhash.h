@@ -1,4 +1,4 @@
-/** @file rhash.h LibRHash interface */
+/** @file rhash.h LibRHash API*/
 #ifndef RHASH_H
 #define RHASH_H
 
@@ -96,6 +96,7 @@ RHASH_API void rhash_free(rhash ctx);
 
 /* additional lo-level functions */
 RHASH_API void  rhash_set_callback(rhash ctx, rhash_callback_t callback, void* callback_data);
+RHASH_API int rhash_get_lib_version(char *version_str);
 
 /** bit-flag: default hash output format is base32 */
 #define RHASH_INFO_BASE32 1

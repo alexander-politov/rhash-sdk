@@ -11,16 +11,15 @@
 #include <windows.h> /* for SetFileApisToOEM(), CharToOem() */
 #endif
 
-#include "librhash/rhash.h"
+#include "rhash.h"
 #include "win_utils.h"
 #include "file_mask.h"
 #include "hash_print.h"
 #include "output.h"
 #include "rhash_main.h"
-#include "version.h"
 #include "parse_cmdline.h"
 
-#define VERSION_STRING PROGRAM_NAME " v" VERSION "\n"
+#define VERSION_STRING PROGRAM_NAME " v" PROGRAM_VERSION
 
 typedef struct options_t options_t;
 struct options_t conf_opt; /* config file parsed options */
@@ -36,17 +35,25 @@ static void print_help_line(const char* option, const char* text)
  */
 static void print_help(void)
 {
+	char version_str[30];
+	char version[10];
 	assert(rhash_data.out != NULL);
+	strcpy(version_str, VERSION_STRING);
+	
+	rhash_get_lib_version(version);
+	strcat(version_str," (lib v");
+	strcat(version_str, version);
+	strcat(version_str, ")");
 
 	/* print program version and usage */
 	fprintf(rhash_data.out, _("%s\n"
 		"Usage: %s [OPTION...] [FILE | -]...\n"
-		"       %s --printf=<format string> [FILE | -]...\n\n"), VERSION_STRING, CMD_FILENAME, CMD_FILENAME);
+		"       %s --printf=<format string> [FILE | -]...\n\n"), version_str, CMD_FILENAME, CMD_FILENAME);
 	fprintf(rhash_data.out, _("Options:\n"));
 
 	print_help_line("  -V, --version ", _("Print program version and exit.\n"));
 	print_help_line("  -h, --help    ", _("Print this help screen.\n"));
-	print_help_line("  -C, --crc32   ", _("Calculate CRC32 hash sum.\n"));
+	print_help_line("  -C, --crc32   ", _("Calculate CRC32 hash sum (default).\n"));
 	print_help_line("      --md4     ", _("Calculate MD4   hash sum.\n"));
 	print_help_line("  -M, --md5     ", _("Calculate MD5   hash sum.\n"));
 	print_help_line("  -H, --sha1    ", _("Calculate SHA1  hash sum.\n"));
@@ -394,6 +401,7 @@ static void apply_option(options_t *opts, parsed_option_t* option)
 	cmdline_opt_t* o = option->o;
 	unsigned short option_type = o->type;
 	char* value = NULL;
+	char version_str[10]; //added in v0.1s
 	
 	/* check if option requires a parameter */
 	if(is_param_required(option_type)) {
@@ -431,8 +439,9 @@ static void apply_option(options_t *opts, parsed_option_t* option)
 	case F_VFNC:
 		( ( void(*)(options_t *) )o->ptr )(opts); /* call option handler */
 		break;
-	case F_PRNT:
-		log_msg("%s", (char*)o->ptr);
+	case F_PRNT:		
+		rhash_get_lib_version(version_str);
+		log_msg("%s v%s (lib v%s)", PROGRAM_NAME, PROGRAM_VERSION ,version_str); // editted in v0.1
 		rsh_exit(0);
 		break;
 	default:
@@ -847,6 +856,8 @@ static void set_default_sums_flags(const char* progName)
 	else if(strstr(buf, "ed2k")) res |= RHASH_ED2K;
 
 	if(strstr(buf, "sfv") && opt.fmt == 0) opt.fmt = FMT_SFV;
+	if(strstr(buf, "bsd") && opt.fmt == 0) opt.fmt = FMT_BSD; //added v0.1
+	if(strstr(buf, "simple") && opt.fmt == 0) opt.fmt = FMT_SIMPLE;//added v0.1
 	if(strstr(buf, "magnet") && opt.fmt == 0) opt.fmt = FMT_MAGNET;
 
 	free(buf);

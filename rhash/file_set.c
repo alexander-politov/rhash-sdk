@@ -6,7 +6,7 @@
 #include <ctype.h>  /* isspace */
 #include <assert.h>
 
-#include "librhash/rhash.h"
+#include "rhash.h"
 #include "common_func.h"
 #include "hash_print.h"
 #include "parse_cmdline.h"

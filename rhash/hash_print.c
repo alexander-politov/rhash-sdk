@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "librhash/rhash.h"
+#include "rhash.h"
 #include "calc_sums.h"
 #include "parse_cmdline.h"
 #include "hash_print.h"
@@ -354,7 +354,7 @@ void print_line(FILE* out, print_item* list, struct file_info *info)
 {
 	const char* basename = get_basename(info->print_path), *tmp;
 	char *url = NULL, *ed2k_url = NULL;
-	char buffer[130];
+	char buffer[130];	
 
 	for(; list; list = list->next) {
 		int print_type = list->flags & ~(PRINT_FLAGS_ALL);
@@ -375,42 +375,44 @@ void print_line(FILE* out, print_item* list, struct file_info *info)
 			assert(len < sizeof(buffer));
 
 			/* output the hash, exit on fail */
-			if(fwrite(buffer, 1, len, out) != len) break;
+			if(fwrite(buffer, 1, len, out) != len) break;			
 			continue;
 		}
 
 		/* output other special items: filepath, URL-encoded filename etc. */
-		switch(print_type) {
-			case PRINT_STR:
-				fprintf(out, "%s", list->data);
-				break;
-			case PRINT_ZERO: /* the '\0' character */
-				fprintf(out, "%c", 0);
-				break;
-			case PRINT_FILEPATH:
-				fprintf(out, "%s", info->print_path);
-				break;
-			case PRINT_BASENAME: /* the filename without directory */
-				fprintf(out, "%s", basename);
-				break;
-			case PRINT_URLNAME: /* URL-encoded filename */
-				if(!url) {
-					tmp = get_basename(file_info_get_utf8_print_path(info));
-					url = (char*)rsh_malloc(urlencode(NULL, tmp) + 1);
-					urlencode(url, tmp);
-				}
-				fprintf(out, "%s", url);
-				break;
-			case PRINT_MTIME: /* the last-modified tine of the filename */
-				print_time(out, info->stat_buf.st_mtime);
-				break;
-			case PRINT_SIZE: /* file size */
-				fprintI64(out, info->size, list->width, (list->flags & PRINT_FLAG_PAD_WITH_ZERO));
-				break;
-			case PRINT_ED2K_LINK:
-				fprint_ed2k_url(out, info, list->flags);
-				break;
-		}
+		if ( list->flags & OPT_VERBOSE ) //added in v0.1
+			switch(print_type) {
+				case PRINT_STR:
+					fprintf(out, "%s", list->data);
+					break;
+				case PRINT_ZERO: /* the '\0' character */
+					fprintf(out, "%c", 0);
+					break;
+				case PRINT_FILEPATH:
+					fprintf(out, "%s", info->print_path);
+					break;
+				case PRINT_BASENAME: /* the filename without directory */
+					fprintf(out, "%s", basename);
+					break;
+				case PRINT_URLNAME: /* URL-encoded filename */
+					if(!url) {
+						tmp = get_basename(file_info_get_utf8_print_path(info));
+						url = (char*)rsh_malloc(urlencode(NULL, tmp) + 1);
+						urlencode(url, tmp);
+					}
+					fprintf(out, "%s", url);
+					break;
+				case PRINT_MTIME: /* the last-modified tine of the filename */
+					print_time(out, info->stat_buf.st_mtime);
+					break;
+				case PRINT_SIZE: /* file size */
+					fprintI64(out, info->size, list->width, (list->flags & PRINT_FLAG_PAD_WITH_ZERO));
+					break;
+				case PRINT_ED2K_LINK:
+					fprint_ed2k_url(out, info, list->flags);
+					break;
+			}	 // switch
+					
 	}
 	free(url);
 	free(ed2k_url);

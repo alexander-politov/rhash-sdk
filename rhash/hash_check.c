@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ctype.h>  /* isspace */
 
-#include "librhash/rhash.h"
+#include "rhash.h"
 #include "output.h"
 #include "common_func.h"
 #include "parse_cmdline.h"

@@ -42,6 +42,7 @@ int calculate_and_print_sums(FILE* out, file_t* file, const char *print_path);
 int check_hash_file(file_t* file, int chdir);
 int rename_file_to_embed_crc32(struct file_info *info);
 void print_sfv_banner(FILE* out);
+void print_sfv_banner_to_stdout();
 int print_sfv_header_line(FILE* out, file_t* file, const char* printpath);
 
 #ifdef __cplusplus

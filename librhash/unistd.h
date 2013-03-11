@@ -2,6 +2,6 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
-#include "platform-dependent.h"
+#include "lib-platform-dependent.h"
 
 #endif /* UNISTD_H */

@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+#define PROGRAM_VERSION "0.1"
+
 struct rhash_t
 {
 	FILE *out;

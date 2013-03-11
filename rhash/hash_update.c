@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h> /* for qsort */
 #include <string.h>
-#include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
 
-#include "librhash/rhash_timing.h"
+//#include "dirent.h"
+#include "rhash_timing.h"
 #include "win_utils.h"
 #include "parse_cmdline.h"
 #include "output.h"
