@@ -120,7 +120,8 @@ typedef struct dir_iterator
 	int left;
 	char* prev_dir;
 } dir_iterator;
-#define MAX_DIRS_DEPTH 64
+#define MAX_DIRS_DEPTH 64 
+
 
 /**
  * Walk directory tree and call given callback function to process each file/directory.
@@ -128,6 +129,7 @@ typedef struct dir_iterator
  * @param start_dir path to the directory to walk recursively
  * @param options the options specifying how to walk the directory tree
  */
+# ifdef _WIN32
 int find_file(file_t* start_dir, find_file_options* options)
 {
 	dir_entry *dirs_stack = NULL; /* root of the dir_list */
@@ -264,3 +266,10 @@ int find_file(file_t* start_dir, find_file_options* options)
 	free(it);
 	return 0;
 }
+#endif
+#ifndef _WIN32
+int find_file(file_t* start_dir, find_file_options* options)
+{
+	return 0;
+}
+#endif

@@ -206,6 +206,9 @@ static int add_sums_to_file(const char* hash_file_path, char* dir_path, file_set
  * @param files_to_add file-set to load the list of files into
  * @return 0 on success, -1 on error (and errno is set)
  */
+
+#ifdef _WIN32
+
 static int load_filtered_dir(const char* dir_path, file_set *crc_entries, file_set *files_to_add)
 {
 	DIR *dp;
@@ -245,6 +248,8 @@ static int load_filtered_dir(const char* dir_path, file_set *crc_entries, file_s
 	return 0;
 }
 
+#endif
+
 /**
  * Calculate and add to the given hash-file the hash-sums for all files
  * from the same directory as the hash-file, but absent from given
@@ -259,6 +264,7 @@ static int load_filtered_dir(const char* dir_path, file_set *crc_entries, file_s
  * @param crc_entries file-set of files to omit from adding
  * @return 0 on success, -1 on error
  */
+#ifdef _WIN32
 static int add_new_crc_entries(const char* hash_file_path, file_set *crc_entries)
 {
 	file_set* files_to_add;
@@ -288,7 +294,13 @@ static int add_new_crc_entries(const char* hash_file_path, file_set *crc_entries
 	free(dir_path);
 	return res;
 }
-
+#endif
+#ifndef _WIN32
+static int add_new_crc_entries(const char* hash_file_path, file_set *crc_entries)
+{
+	return 0;
+}
+#endif
 /**
  * Move all SFV header lines (i.e. all lines starting with a semicolon)
  * from the end of updated file to its head.
